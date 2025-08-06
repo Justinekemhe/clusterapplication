@@ -16,8 +16,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+
   late String _email, _password;
   bool isLoading = false;
   bool _isHidden = true;
@@ -38,257 +39,179 @@ class _LoginPageState extends State<LoginPage> {
       body: isLoading
           ? LoadingPage()
           : SingleChildScrollView(
-              child: Container(
-                  child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  Center(
-                    child: Container(
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                            image: AssetImage('assets/images/logo.png'),
-                            fit: BoxFit.contain),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    SizedBox(height: 20.0),
+                    Center(
+                      child: Container(
+                        height: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: AssetImage('assets/images/logo.png'),
+                              fit: BoxFit.contain),
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  Text(
-                    "Ingia kwenye akaunti yako",
-                    style: TextStyle(fontSize: 22.0),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: Form(
+                    SizedBox(height: 20.0),
+                    Text(
+                      "Ingia kwenye akaunti yako",
+                      style: TextStyle(fontSize: 22.0),
+                    ),
+                    Form(
                       key: _formKey,
                       child: Column(
                         children: [
-                          SizedBox(
-                            height: 10.0,
-                          ),
+                          SizedBox(height: 20.0),
                           TextFormField(
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.email),
+                              labelText: "Barua pepe",
+                              border: OutlineInputBorder(),
+                            ),
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return "Barua pepe inahitajika";
                               }
+                              final emailRegex =
+                                  RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                              if (!emailRegex.hasMatch(value)) {
+                                return "Barua pepe si sahihi";
+                              }
                               return null;
                             },
-                            onSaved: (value) {
-                              setState(() {
-                                _email = value!;
-                              });
-                            },
-                            keyboardType: TextInputType.emailAddress,
+                            onSaved: (value) => _email = value!,
+                          ),
+                          SizedBox(height: 16.0),
+                          TextFormField(
+                            obscureText: _isHidden,
                             decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.email),
-                              focusColor: Colors.orangeAccent,
-                              labelText: "Barua pepe",
-                              labelStyle: TextStyle(
-                                fontSize: 14.0,
-                              ),
-                              hintStyle: TextStyle(
-                                  fontSize: 14.0, color: Colors.black),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
+                              prefixIcon: Icon(Icons.lock_outline),
+                              labelText: "Nywila",
+                              border: OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                icon: Icon(_isHidden
+                                    ? Icons.visibility
+                                    : Icons.visibility_off),
+                                onPressed: _togglePasswordView,
                               ),
                             ),
-                            style: TextStyle(fontSize: 15.0),
-                          ),
-                          SizedBox(
-                            height: 10.0,
-                          ),
-                          TextFormField(
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return "Nywila inahitajika";
                               }
                               return null;
                             },
-                            onSaved: (value) {
-                              setState(() {
-                                _password = value!;
-                              });
-                            },
-                            obscureText: _isHidden,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.lock_outline),
-                              labelText: "Nywila",
-                              labelStyle: TextStyle(
-                                fontSize: 14.0,
-                              ),
-                              suffix: InkWell(
-                                onTap: _togglePasswordView,
-                                child: Icon(
-                                  _isHidden
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                ),
-                              ),
-                              hintStyle: TextStyle(
-                                  fontSize: 14.0, color: Colors.black),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0)),
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                            ),
-                            style: TextStyle(fontSize: 15.0),
+                            onSaved: (value) => _password = value!,
                           ),
-                          SizedBox(
-                            height: 15.0,
-                          ),
+                          SizedBox(height: 24.0),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors.blue,
-                                textStyle: TextStyle(
-                                    color: Colors.white, fontSize: 18.0)),
-                            onPressed: () {
-                              if (!_formKey.currentState!.validate()) {
-                                return;
-                              }
-                              _formKey.currentState?.save();
-                              setState(() {
-                                isLoading = true;
-                              });
-                              login();
-                              // Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
-                            },
-                            child: Container(
-                              height: 60.0,
-                              child: Center(
-                                child: Text(
-                                  "INGIA",
-                                ),
-                              ),
+                              minimumSize: Size.fromHeight(50),
                             ),
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                _formKey.currentState!.save();
+                                setState(() => isLoading = true);
+                                login();
+                              }
+                            },
+                            child: Text("INGIA"),
                           ),
-                          SizedBox(
-                            height: 15.0,
-                          ),
+                          SizedBox(height: 20.0),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               TextButton(
-                                style: TextButton.styleFrom(
-                                    foregroundColor: Colors.black38),
                                 onPressed: () {
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              ForgotPasswordPage()));
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ForgotPasswordPage()),
+                                  );
                                 },
-                                child: Container(
-                                  height: 50.0,
-                                  child: Text(
-                                    "Umesahau nywila?",
-                                    style: TextStyle(
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
+                                child: Text("Umesahau nywila?"),
                               ),
                               TextButton(
-                                style: TextButton.styleFrom(
-                                    foregroundColor: Colors.black38),
                                 onPressed: () {
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              RegisterPage()));
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => RegisterPage()),
+                                  );
                                 },
-                                child: Container(
-                                  height: 50.0,
-                                  child: Text(
-                                    "Jisajili sasa",
-                                    style: TextStyle(
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
+                                child: Text("Jisajili sasa"),
                               ),
                             ],
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
-              )),
+                  ],
+                ),
+              ),
             ),
     );
   }
 
   Future<void> login() async {
     var url = Uri.parse(AppConfig.LOGIN_URL);
-    var response =
-        await http.post(url, body: {'email': _email, 'password': _password});
 
-    var userData = json.decode(response.body);
-    if (userData['success']) {
-      setState(() {
-        isLoading = false;
-      });
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      preferences.setInt("user_id", userData['user']['id']);
-      preferences.setString("name", userData['user']['name']);
-      preferences.setString("access_token", userData['user']['access_token']);
-      preferences.setString("phone_number", userData['user']['phone_number']);
-      preferences.setString("email", userData['user']['email']);
-      preferences.setBool("isLoggedIn", true);
+    try {
+      final response = await http.post(url, body: {
+        'email': _email,
+        'password': _password
+      }).timeout(Duration(seconds: 15));
 
-      preferences.commit();
-      Navigator.pushAndRemoveUntil(
-          context,
-          PageRouteBuilder(pageBuilder: (BuildContext context,
-              Animation animation, Animation secondaryAnimation) {
-            return HomePage(0);
-          }, transitionsBuilder: (BuildContext context,
-              Animation<double> animation,
-              Animation<double> secondaryAnimation,
-              Widget child) {
-            return new SlideTransition(
-              position: new Tween<Offset>(
-                begin: const Offset(1.0, 0.0),
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
-            );
-          }),
-          (Route route) => false);
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      final snackBar = SnackBar(
-        content: Text(
-          userData['message'],
+      print("Login response status: ${response.statusCode}");
+      print("Login response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        var userData = json.decode(response.body);
+
+        if (userData['success']) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setInt("user_id", userData['user']['id']);
+          prefs.setString("name", userData['user']['name']);
+          prefs.setString("access_token", userData['user']['access_token']);
+          prefs.setString("phone_number", userData['user']['phone_number']);
+          prefs.setString("email", userData['user']['email']);
+          prefs.setBool("isLoggedIn", true);
+
+          setState(() => isLoading = false);
+
+          Navigator.pushAndRemoveUntil(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (_, __, ___) => HomePage(0),
+              transitionsBuilder: (_, animation, __, child) => SlideTransition(
+                position:
+                    Tween<Offset>(begin: Offset(1.0, 0.0), end: Offset.zero)
+                        .animate(animation),
+                child: child,
+              ),
+            ),
+            (route) => false,
+          );
+        } else {
+          throw Exception(userData['message']);
+        }
+      } else {
+        throw Exception("Server error: ${response.statusCode}");
+      }
+    } catch (e) {
+      setState(() => isLoading = false);
+      debugPrint("Login error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Login failed: ${e.toString()}"),
+          backgroundColor: Colors.red,
         ),
-        backgroundColor: Colors.red,
       );
-
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 }

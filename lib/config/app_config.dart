@@ -2,11 +2,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AppConfig {
   static final String LOGIN_URL =
-      "https://clustering.comtech-alliance.org/api/login";
+      "https://clustering.comtech-alliance.org/login.php";
   static final String USER_INFO_URL =
       "https://clustering.comtech-alliance.org/api/user/info";
   static final String REGISTER_URL =
-      "https://clustering.comtech-alliance.org/api/register";
+      "https://clustering.comtech-alliance.org/register.php";
   static final String UPDATE_PROFILE_URL =
       "https://clustering.comtech-alliance.org/api/update/profile";
   static final String CHANGE_PASSWORD_URL =
